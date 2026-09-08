@@ -235,7 +235,7 @@ li { list-style: none; }
   grid-template-columns: minmax(210px, 250px) minmax(590px, 1fr) minmax(300px, 350px);
   gap: 18px;
   align-items: start;
-  direction: ltr;
+  direction: rtl;
 }
 .tabletop-layout > * { direction: rtl; }
 

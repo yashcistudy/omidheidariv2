@@ -35,10 +35,10 @@ const iconMap = {
 };
 
 const sectionLabel = {
-  role: "نقش",
-  problem: "مسئله",
-  decision: "تصمیم",
-  result: "نتیجه",
+  role: "تجربه‌ی من",
+  problem: "مسئله‌ای که می‌بینم",
+  decision: "کاری که می‌کنم",
+  result: "چیزی که می‌سازیم",
 };
 
 function routeFromHash() {
@@ -110,7 +110,7 @@ function Entry({ onReview }) {
           <span>{content.identity.nameEn}</span>
         </div>
         <div className="entry-card__copy">
-          <p className="eyebrow">یک رزومه، دو مسیر</p>
+          <p className="eyebrow">یک مسیر کافی نبود</p>
           <h1 id="entry-title">{content.identity.name}</h1>
           <p className="entry-card__role">{content.identity.role}</p>
           <p className="entry-card__opening">{content.identity.opening}</p>
@@ -119,13 +119,13 @@ function Entry({ onReview }) {
             <Button kind="ink" icon={FileText} onClick={() => go("cv")}>مطالعه‌ی رزومه</Button>
             <LinkButton kind="quiet" icon={DownloadSimple} href={assetPath("Omid-Heidari-CV.pdf")} download>دانلود مستقیم PDF</LinkButton>
           </div>
-          <button className="review-link" onClick={onReview}>این نسخه را با امید بازبینی می‌کنیم</button>
+          <button className="review-link" onClick={onReview}>این نسخه هنوز روی میز کار است</button>
         </div>
         <div className="entry-die">
           <div className="wooden-well">
             <Dice3D value={6} compact />
           </div>
-          <p>بازی اینجا یک پوسته نیست؛ روش فکرکردن است.</p>
+          <p>برای من، بازی پوسته‌ی کار نیست؛ روشی برای فکرکردن است.</p>
         </div>
       </section>
       <p className="entry-credit">
@@ -145,9 +145,9 @@ function ProfileCard() {
       <p className="profile-card__role">{content.identity.role}</p>
       <blockquote>{content.identity.line}</blockquote>
       <div className="profile-card__links">
-        <button onClick={() => go("cv")}><FileText size={18} />رزومه را سریع ببین</button>
+        <button onClick={() => go("cv")}><FileText size={18} />رزومه‌ی من را سریع ببینید</button>
         <a href={assetPath("Omid-Heidari-CV.pdf")} download><DownloadSimple size={18} />دانلود نسخه‌ی PDF</a>
-        <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={18} />لینکدین امید</a>
+        <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={18} />لینکدین من</a>
       </div>
       <p className="profile-card__slogan">{content.identity.slogan}</p>
     </aside>
@@ -177,8 +177,8 @@ function BoardMap({ activeId, setActiveId }) {
     <section className="board-map" aria-label="قلمروهای تجربه‌ی امید">
       <div className="board-map__hub">
         <Compass size={30} weight="duotone" aria-hidden="true" />
-        <p>برای چه چیزی آمدی؟</p>
-        <small>یک مسیر انتخاب کن</small>
+        <p>دوست دارید از کدام مسیر با هم شروع کنیم؟</p>
+        <small>مسیرتان را انتخاب کنید</small>
       </div>
       {content.territories.map((territory) => (
         <TerritoryTile
@@ -199,7 +199,7 @@ function CaseFile({ territory, onOpenDetail, onContact }) {
       <header className="case-file__head">
         <span className="case-file__icon"><Icon size={28} weight="duotone" /></span>
         <div>
-          <small>قلمرو انتخاب‌شده</small>
+          <small>انتخاب شما</small>
           <h2>{territory.name}</h2>
         </div>
       </header>
@@ -214,11 +214,11 @@ function CaseFile({ territory, onOpenDetail, onContact }) {
       </dl>
       <div className="evidence-slip">
         <SealCheck size={22} weight="duotone" />
-        <span><b>سند فعلی</b>{territory.proof}</span>
+        <span><b>چیزی که فعلاً می‌توانید بررسی کنید</b>{territory.proof}</span>
         <small>{territory.evidenceStatus}</small>
       </div>
       <div className="case-file__actions">
-        <Button icon={ArrowLeft} onClick={onOpenDetail}>جزئیات این قلمرو</Button>
+        <Button icon={ArrowLeft} onClick={onOpenDetail}>این مسیر را بیشتر ببینید</Button>
         <Button kind="ink" icon={Briefcase} onClick={() => onContact(territory.cta)}>{territory.cta}</Button>
       </div>
     </aside>
@@ -229,9 +229,9 @@ function MethodTrack() {
   return (
     <section className="method-track" aria-labelledby="method-title">
       <div className="method-track__intro">
-        <span>روش امید</span>
-        <h2 id="method-title">از مسئله تا اثری که بشود دید</h2>
-        <p>این نوار امتیاز نیست؛ مسیر اجرای یک پروژه‌ی گیمیفیکیشن است.</p>
+        <span>روش من</span>
+        <h2 id="method-title">از مسئله تا اثری که بتوانیم ببینیم</h2>
+        <p>این امتیازشمار نیست؛ مسیری است که برای اجرای یک پروژه‌ی گیمیفیکیشن طی می‌کنم.</p>
       </div>
       <ol>
         {content.method.map((stage, index) => (
@@ -252,12 +252,12 @@ function ContactSheet({ title, onClose }) {
         <button className="icon-button" onClick={onClose} aria-label="بستن"><X size={22} /></button>
         <p className="eyebrow">شروع یک گفت‌وگوی واقعی</p>
         <h2 id="contact-title">{title}</h2>
-        <p>مسیر تماس نهایی هنوز باید با امید تأیید شود. فعلاً لینکدین مطمئن‌ترین مسیر عمومی است.</p>
+        <p>اگر این مسیر به کارتان نزدیک است، خوشحال می‌شوم گفت‌وگو کنیم. فعلاً لینکدین مطمئن‌ترین راه عمومی تماس با من است.</p>
         <div className="contact-sheet__actions">
           <LinkButton icon={LinkedinLogo} href={content.meta.linkedin} target="_blank" rel="noreferrer">پیام در لینکدین</LinkButton>
-          <LinkButton kind="ink" icon={Play} href={content.meta.aparat} target="_blank" rel="noreferrer">اول مصاحبه را ببین</LinkButton>
+          <LinkButton kind="ink" icon={Play} href={content.meta.aparat} target="_blank" rel="noreferrer">اول روایت من را ببینید</LinkButton>
         </div>
-        <p className="prototype-truth"><Info size={18} />در نسخه‌ی بعد، ایمیل یا فرم رزرو تأییدشده جایگزین این یادداشت می‌شود.</p>
+        <p className="prototype-truth"><Info size={18} />ایمیل یا فرم رزرو مستقیم را بعد از تأیید نهایی به اینجا اضافه می‌کنیم.</p>
       </section>
     </div>
   );
@@ -336,9 +336,9 @@ function BoardView({ onReview }) {
                 ))}
               </div>
               <div>
-                <p>تاس چالش · رد سه انتخاب اخیر</p>
-                <strong>وجه {dieValue}: {active.summary}</strong>
-                <Button kind="quiet" icon={DiceFive} onClick={roll}>تاس را بینداز</Button>
+                <p>اگر میان مسیرها مردد مانده‌اید</p>
+                <strong>پیشنهاد تاس: {active.name}</strong>
+                <Button kind="quiet" icon={DiceFive} onClick={roll}>بگذارید تاس پیشنهاد بدهد</Button>
               </div>
             </div>
           </div>
@@ -348,10 +348,10 @@ function BoardView({ onReview }) {
         <section className="interview-strip paper-surface">
           <img src={assetPath("omid-interview-poster.jpg")} alt="تصویر مصاحبه‌ی امید حیدری" />
           <div>
-            <p className="eyebrow">اگر ترجیح می‌دهی خودش حرف بزند</p>
-            <h2>روایت مسیر، با صدای امید</h2>
-            <p>مصاحبه‌ی کامل در آپارات؛ بدون پخش خودکار و بدون قطع‌کردن مسیر تو.</p>
-            <LinkButton icon={Play} href={content.meta.aparat} target="_blank" rel="noreferrer">تماشای مصاحبه</LinkButton>
+            <p className="eyebrow">اگر ترجیح می‌دهید از زبان خودم بشنوید</p>
+            <h2>این مسیر را با صدای خودم تعریف کرده‌ام</h2>
+            <p>مصاحبه‌ی کامل من در آپارات است؛ بدون پخش خودکار و بدون اینکه مسیرتان را قطع کند.</p>
+            <LinkButton icon={Play} href={content.meta.aparat} target="_blank" rel="noreferrer">مصاحبه‌ی من را ببینید</LinkButton>
           </div>
         </section>
         <footer className="site-footer">
@@ -373,18 +373,18 @@ function CVView({ onReview }) {
         <header className="cv-identity">
           <img src={assetPath("omid-portrait.png")} alt="پرتره‌ی امید حیدری" />
           <div>
-            <p className="eyebrow">نسخه‌ی خواندنی، بدون بازی</p>
+            <p className="eyebrow">اگر ترجیح می‌دهید مستقیم سر اصل مطلب برویم</p>
             <h1>{content.identity.name}</h1>
             <p>{content.identity.role}</p>
             <div className="cv-identity__actions">
               <LinkButton icon={DownloadSimple} href={assetPath("Omid-Heidari-CV.pdf")} download>دانلود PDF</LinkButton>
-              <Button kind="ink" icon={DiceFive} onClick={() => go("board")}>دیدن تجربه‌ی کامل</Button>
+              <Button kind="ink" icon={DiceFive} onClick={() => go("board")}>برگردیم به میز بازی</Button>
             </div>
           </div>
         </header>
         <div className="cv-layout">
           <section className="cv-main">
-            <h2>تجربه‌ی کاری</h2>
+            <h2>مسیر کاری من</h2>
             {content.cv.experience.map((job) => (
               <article className="cv-job" key={`${job.title}-${job.org}`}>
                 <div>
@@ -401,21 +401,21 @@ function CVView({ onReview }) {
           </section>
           <aside className="cv-side">
             <section>
-              <h2>حوزه‌های کاری</h2>
+              <h2>کارهایی که انجام می‌دهم</h2>
               <ul>{content.cv.capabilities.map((item) => <li key={item}><Check size={16} />{item}</li>)}</ul>
             </section>
             <section>
-              <h2>تحصیلات</h2>
+              <h2>تحصیلات من</h2>
               <ul>{content.cv.education.map((item) => <li key={item}>{item}</li>)}</ul>
             </section>
             <section>
-              <h2>عضویت</h2>
+              <h2>عضویت حرفه‌ای</h2>
               <p>{content.cv.membership}</p>
             </section>
             <section>
-              <h2>گفت‌وگو</h2>
-              <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={18} />لینکدین امید</a>
-              <a href={content.meta.aparat} target="_blank" rel="noreferrer"><Play size={18} />مصاحبه در آپارات</a>
+              <h2>راه‌های گفت‌وگو</h2>
+              <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={18} />لینکدین من</a>
+              <a href={content.meta.aparat} target="_blank" rel="noreferrer"><Play size={18} />مصاحبه‌ی من در آپارات</a>
             </section>
           </aside>
         </div>
@@ -457,9 +457,9 @@ function PuzzleView({ onReview }) {
       <UtilityNav view="puzzle" onReview={onReview} />
       <main id="main-content" className="puzzle-view">
         <section className="puzzle-brief paper-surface">
-          <p className="eyebrow">یک چالش کوتاه؛ کاملاً اختیاری</p>
+          <p className="eyebrow">یک چالش کوتاه از طرف من؛ کاملاً اختیاری</p>
           <h1>کدام تاس نمی‌تواند واقعی باشد؟</h1>
-          <p>در تاس استاندارد، وجه‌های مقابل مجموعاً ۷ می‌شوند. یکی از این سه گسترده این قانون را می‌شکند.</p>
+          <p>در تاس استاندارد، وجه‌های مقابل مجموعاً ۷ می‌شوند. یکی از این سه گسترده این قانون را می‌شکند. پیدایش می‌کنید؟</p>
           <div className="puzzle-brief__rule"><BookOpen size={24} /><span>۱ مقابل ۶ · ۲ مقابل ۵ · ۳ مقابل ۴</span></div>
         </section>
         <section className="puzzle-options" aria-label="گزینه‌های معمای تاس">
@@ -475,7 +475,7 @@ function PuzzleView({ onReview }) {
             <div>
               <h2>{correct ? "درست بود." : "این یکی در واقع ممکن است."}</h2>
               <p>{correct ? "در گزینه‌ی B، دو وجهی که باید مقابل هم باشند در جایگاه کناری قرار گرفته‌اند." : "یک بار دیگر نسبت وجه‌های مقابل را با جای آن‌ها روی گسترده مقایسه کن."}</p>
-              <small>این معما قرار نیست هوش یا توانایی کاری کسی را اندازه بگیرد؛ فقط یک مکث بازی‌گونه است.</small>
+              <small>این معما آزمون استخدامی نیست؛ فقط یکی از مکث‌های بازی‌گونه‌ای است که دوست دارم با شما قسمت کنم.</small>
             </div>
           </section>
         ) : null}
