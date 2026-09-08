@@ -1,32 +1,33 @@
-# Design QA — Omid Portfolio v0.2
+# Design QA — Omid Portfolio v0.3
 
 ## Visual target
 
-- Selected direction: premium top-down strategy board on a walnut table
+- Selected direction: a mature, top-down strategy board on a walnut table
+- Reference: `docs/selected-reference.png`
 - Comparison artifact: `qa-compare-final.png`
-- Desktop comparison viewport: implementation captured at 1348 × 926 and compared beside a normalized 1348 × 926 reference
-- Mobile check: entry and board rendered inside independent 390 × 844 browser viewports
+- Primary desktop browser check: 1363 × 936
+- Mobile rules reviewed at the 900 px and 650 px breakpoints
 
 ## Results
 
 | Area | Result | Evidence |
 |---|---|---|
-| Reference fidelity | Passed | Same-input comparison confirms the tabletop composition, three-column board, physical dossier, portrait card, territory pieces, and dice tray |
-| Mature art direction | Passed | Restrained navy, ivory, walnut, brass, orange, teal, aubergine; paper grain, fabric, wood, inset wells, believable shadows; no cartoon UI |
-| First-touch hierarchy | Passed | Full experience, readable CV, and PDF download are visible together with Omid's identity |
-| Core interactions | Passed | Territory selection, active case file, random roll, three-die history, detail sheet, contact sheet, CV navigation, puzzle answer, and return-to-entry verified |
-| Responsive behavior | Passed | 390 px entry and board have zero horizontal page overflow; utility navigation wraps cleanly; five territories remain usable |
-| RTL and typography | Passed | Persian direction, Vazirmatn variable font, readable line lengths, and consistent number/label treatment |
-| Accessibility basics | Passed | Skip link, visible focus, semantic buttons/links, dialog labels, reduced-motion support, text alternatives, non-color evidence labels |
-| GitHub Pages readiness | Passed | Production build uses relative entry, CSS, image, die, and PDF paths; `.nojekyll` and deployment workflow included |
-| Runtime health | Passed | No application-origin console errors; the only observed log came from the cloud-browser extension, outside the prototype |
+| Reference fidelity | Passed | The three-part tabletop composition, portrait dossier, central board, path pieces and physical dice language remain intact |
+| RTL hierarchy | Passed | Desktop order is profile on the right, board in the middle and selected-path dossier on the left |
+| Mobile path choice | Passed | The die sits before the route cards; choosing a route opens its bottom-sheet dossier immediately and locks background scrolling |
+| Route-card fit | Passed | Desktop pieces use shorter copy, internal padding, line clamping and an anchored number; mobile cards remove the clip path and reveal the complete summary |
+| Dice purpose | Passed | One real die now selects a meaningful route: ۱–۵ map to the five paths and ۶ returns the choice to the visitor |
+| Copy voice | Passed | Public copy is addressed directly from Omid's first-person perspective; no public use of «آدم‌ها» or labels such as «وجه ۳» remains |
+| Project proof | Passed | Three supplied project box images and four supplied organization/brand marks render with explicit leadership and team credit |
+| Contact path | Passed | Email, LinkedIn, Instagram and GitHub are present; the Formspree form stays visibly disabled until its endpoint is configured |
+| Puzzle | Passed | The optional puzzle generates a new three-number code, accepts five attempts and returns exact-position versus wrong-position feedback |
+| Accessibility basics | Passed | Skip link, semantic controls, dialog labels, keyboard close, focus styles, reduced-motion support and alt text are present |
+| GitHub Pages readiness | Passed | The Vite build uses the repository base dynamically; the Pages workflow uploads `dist/client` |
+| Runtime health | Passed | Production build and four packaging tests pass; browser interactions produce no application-origin errors |
 
-## Remaining content dependencies (not build defects)
+## Intentional placeholders
 
-- Approved email, booking link, or contact form
-- Public evidence for claims still marked as pending
-- Confirmation of overlapping employment dates and one job title
-- Final creator portfolio URL if it changes
+- `formspreeEndpoint` in `src/content.fa.js` is empty until Yas adds the approved Formspree endpoint.
+- Claims without supplied public evidence remain carefully phrased rather than presented as verified metrics.
 
 **final result: passed**
-

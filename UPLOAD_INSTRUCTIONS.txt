@@ -1,0 +1,21 @@
+OMID PORTFOLIO v0.3 — REPLACEMENT FILES
+
+1. Extract this ZIP on your computer.
+2. Open your GitHub repository and choose Add file > Upload files.
+3. Upload the folders named src and public. Keep their folder structure and allow GitHub to replace files with the same names.
+4. You may also upload design-qa.md; it does not affect the website.
+5. Commit the upload to main. The existing GitHub Pages workflow will rebuild the site.
+
+IMPORTANT: GitHub does not extract ZIP files. Upload the extracted src and public folders, not the ZIP itself.
+
+FORMSPREE LATER
+
+Open src/content.fa.js and replace:
+
+  formspreeEndpoint: "",
+
+with your complete endpoint, for example:
+
+  formspreeEndpoint: "https://formspree.io/f/your-code",
+
+Until then, the form is shown but its submit button is intentionally disabled.

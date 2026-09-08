@@ -8,12 +8,18 @@ import {
   Compass,
   DiceFive,
   DownloadSimple,
+  EnvelopeSimple,
   Export,
   FileText,
+  GithubLogo,
   Hammer,
   Info,
+  InstagramLogo,
   LinkedinLogo,
+  Minus,
+  PaperPlaneTilt,
   Play,
+  Plus,
   SealCheck,
   Stack,
   Target,
@@ -25,6 +31,7 @@ import { content } from "./content.fa.js";
 import { Dice3D } from "./Dice3D.jsx";
 
 const assetPath = (path) => `${import.meta.env.BASE_URL}assets/${path}`;
+const faNumber = (value) => String(value).replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[digit]);
 
 const iconMap = {
   lead: Briefcase,
@@ -148,6 +155,7 @@ function ProfileCard() {
         <button onClick={() => go("cv")}><FileText size={18} />رزومه‌ی من را سریع ببینید</button>
         <a href={assetPath("Omid-Heidari-CV.pdf")} download><DownloadSimple size={18} />دانلود نسخه‌ی PDF</a>
         <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={18} />لینکدین من</a>
+        <a href={`mailto:${content.meta.email}`}><EnvelopeSimple size={18} />{content.meta.email}</a>
       </div>
       <p className="profile-card__slogan">{content.identity.slogan}</p>
     </aside>
@@ -163,11 +171,10 @@ function TerritoryTile({ territory, active, onSelect }) {
       onClick={() => onSelect(territory.id)}
       aria-pressed={active}
     >
-      <span className="territory__stamp">{territory.stamp}</span>
       <Icon size={30} weight="duotone" aria-hidden="true" />
       <strong>{territory.name}</strong>
       <span>{territory.summary}</span>
-      <b>وجه {territory.face}</b>
+      <b className="territory__number" aria-label={`شماره‌ی ${faNumber(territory.face)}`}>{faNumber(territory.face)}</b>
     </button>
   );
 }
@@ -177,8 +184,8 @@ function BoardMap({ activeId, setActiveId }) {
     <section className="board-map" aria-label="قلمروهای تجربه‌ی امید">
       <div className="board-map__hub">
         <Compass size={30} weight="duotone" aria-hidden="true" />
-        <p>دوست دارید از کدام مسیر با هم شروع کنیم؟</p>
-        <small>مسیرتان را انتخاب کنید</small>
+        <p>دوست دارید از کدام مسیر شروع کنیم؟</p>
+        <small>یکی را بردارید</small>
       </div>
       {content.territories.map((territory) => (
         <TerritoryTile
@@ -199,7 +206,7 @@ function CaseFile({ territory, onOpenDetail, onContact }) {
       <header className="case-file__head">
         <span className="case-file__icon"><Icon size={28} weight="duotone" /></span>
         <div>
-          <small>انتخاب شما</small>
+          <small>مسیر انتخابی شما</small>
           <h2>{territory.name}</h2>
         </div>
       </header>
@@ -214,7 +221,7 @@ function CaseFile({ territory, onOpenDetail, onContact }) {
       </dl>
       <div className="evidence-slip">
         <SealCheck size={22} weight="duotone" />
-        <span><b>چیزی که فعلاً می‌توانید بررسی کنید</b>{territory.proof}</span>
+        <span><b>چیزی که می‌توانید بررسی کنید</b>{territory.proof}</span>
         <small>{territory.evidenceStatus}</small>
       </div>
       <div className="case-file__actions">
@@ -222,6 +229,35 @@ function CaseFile({ territory, onOpenDetail, onContact }) {
         <Button kind="ink" icon={Briefcase} onClick={() => onContact(territory.cta)}>{territory.cta}</Button>
       </div>
     </aside>
+  );
+}
+
+function MobilePathSheet({ territory, open, onClose, onOpenDetail, onContact }) {
+  if (!open) return null;
+  return (
+    <div className="mobile-case-layer" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <section className="mobile-case-sheet" role="dialog" aria-modal="true" aria-label={`جزئیات مسیر ${territory.name}`}>
+        <div className="mobile-case-sheet__handle" aria-hidden="true" />
+        <button className="icon-button mobile-case-sheet__close" onClick={onClose} aria-label="بستن"><X size={22} /></button>
+        <CaseFile territory={territory} onOpenDetail={onOpenDetail} onContact={onContact} />
+      </section>
+    </div>
+  );
+}
+
+function DiceStation({ value, rollKey, message, onRoll }) {
+  return (
+    <section className="dice-station" aria-label="تاس انتخاب مسیر">
+      <div className="dice-station__well">
+        <Dice3D value={value} rollKey={rollKey} />
+      </div>
+      <div className="dice-station__copy">
+        <p>اگر انتخاب را بسپارید به شانس</p>
+        <strong>{message}</strong>
+        <small>۱ رهبری · ۲ ساختن · ۳ بازی · ۴ دور یک میز · ۵ با تیم · ۶ انتخاب آزاد</small>
+        <Button kind="quiet" icon={DiceFive} onClick={onRoll}>تاس را بیندازید</Button>
+      </div>
+    </section>
   );
 }
 
@@ -245,19 +281,77 @@ function MethodTrack() {
   );
 }
 
+function ProjectShelf() {
+  return (
+    <section className="project-shelf" aria-labelledby="projects-title">
+      <header className="project-shelf__head paper-surface">
+        <div>
+          <p className="eyebrow">چند بازی که از روی میز بیرون آمده‌اند</p>
+          <h2 id="projects-title">ایده و جهت با من؛ ساختن با تیم</h2>
+        </div>
+        <p>در این پروژه‌ها ذهن اولیه، مسئله و جهت طراحی را رهبری کرده‌ام. جزئیات طراحی و اجرای هر بازی حاصل کار تیمی بوده است.</p>
+        <LinkButton kind="ink" icon={ArrowLeft} href={content.meta.projectsUrl} target="_blank" rel="noreferrer">پروژه‌های بیشتر در گیک‌بازی</LinkButton>
+      </header>
+      <div className="project-shelf__cards">
+        {content.projects.map((project) => (
+          <article className="project-card paper-surface" key={project.id}>
+            <img src={assetPath(project.image)} alt={project.alt} />
+            <div className="project-card__body">
+              <p>{project.client}</p>
+              <h3>{project.title}</h3>
+              <p>{project.story}</p>
+              <dl>
+                <div><dt>نقش من</dt><dd>{project.role}</dd></div>
+                <div><dt>تیم</dt><dd>{project.team}</dd></div>
+              </dl>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="studio-stamps" aria-label="مجموعه‌ها و برندهای مرتبط">
+        {content.studios.map((studio) => (
+          <figure key={studio.name} className="studio-stamp paper-surface">
+            <img src={assetPath(studio.image)} alt={`نشان ${studio.name}`} />
+            <figcaption><b>{studio.name}</b><span>{studio.kind}</span></figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ContactLinks({ compact = false }) {
+  return (
+    <div className={`contact-links${compact ? " contact-links--compact" : ""}`}>
+      <a href={`mailto:${content.meta.email}`}><EnvelopeSimple size={19} />ایمیل</a>
+      <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={19} />لینکدین</a>
+      <a href={content.meta.instagram} target="_blank" rel="noreferrer"><InstagramLogo size={19} />اینستاگرام</a>
+      <a href={content.meta.github} target="_blank" rel="noreferrer"><GithubLogo size={19} />گیت‌هاب</a>
+    </div>
+  );
+}
+
 function ContactSheet({ title, onClose }) {
+  const formReady = Boolean(content.meta.formspreeEndpoint.trim());
+
   return (
     <div className="modal-layer" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="contact-sheet paper-surface" role="dialog" aria-modal="true" aria-labelledby="contact-title">
         <button className="icon-button" onClick={onClose} aria-label="بستن"><X size={22} /></button>
-        <p className="eyebrow">شروع یک گفت‌وگوی واقعی</p>
+        <p className="eyebrow">اگر مسئله‌ای روی میز دارید</p>
         <h2 id="contact-title">{title}</h2>
-        <p>اگر این مسیر به کارتان نزدیک است، خوشحال می‌شوم گفت‌وگو کنیم. فعلاً لینکدین مطمئن‌ترین راه عمومی تماس با من است.</p>
-        <div className="contact-sheet__actions">
-          <LinkButton icon={LinkedinLogo} href={content.meta.linkedin} target="_blank" rel="noreferrer">پیام در لینکدین</LinkButton>
-          <LinkButton kind="ink" icon={Play} href={content.meta.aparat} target="_blank" rel="noreferrer">اول روایت من را ببینید</LinkButton>
-        </div>
-        <p className="prototype-truth"><Info size={18} />ایمیل یا فرم رزرو مستقیم را بعد از تأیید نهایی به اینجا اضافه می‌کنیم.</p>
+        <p>کمی از مسئله بگویید؛ اگر بتوانم کمک کنم، خودم ادامه‌ی گفت‌وگو را با شما پیش می‌برم.</p>
+        <ContactLinks />
+        <form className="contact-form" action={formReady ? content.meta.formspreeEndpoint : undefined} method="POST" onSubmit={formReady ? undefined : (event) => event.preventDefault()}>
+          <input type="hidden" name="_subject" value={`پیام تازه از پورتفولیوی امید — ${title}`} />
+          <label><span>نام و نام خانوادگی</span><input name="name" autoComplete="name" required /></label>
+          <label><span>ایمیل</span><input name="email" type="email" autoComplete="email" required /></label>
+          <label><span>سازمان یا نقش شما <small>اختیاری</small></span><input name="organization" autoComplete="organization" /></label>
+          <label className="contact-form__wide"><span>چه چیزی روی میز است؟</span><textarea name="message" rows="4" required placeholder="مسئله، پروژه یا گفت‌وگویی که در ذهن دارید…" /></label>
+          <input type="hidden" name="path" value={title} />
+          <Button icon={PaperPlaneTilt} type="submit" disabled={!formReady}>{formReady ? "ارسال برای امید" : "فرم هنوز فعال نشده"}</Button>
+        </form>
+        {!formReady ? <p className="prototype-truth"><Info size={18} />فرم آماده است. لینک Formspree را در فایل <b>content.fa.js</b> وارد کنید تا دکمه‌ی ارسال فعال شود.</p> : null}
       </section>
     </div>
   );
@@ -269,7 +363,7 @@ function TerritoryDetail({ territory, onClose, onContact }) {
       <article className="detail-sheet paper-surface" role="dialog" aria-modal="true" aria-labelledby="detail-title" style={{ "--territory": territory.color }}>
         <button className="icon-button" onClick={onClose} aria-label="بستن"><X size={22} /></button>
         <header>
-          <p className="eyebrow">{territory.stamp} / وجه {territory.face}</p>
+          <p className="eyebrow">مسیر {faNumber(territory.face)} / {territory.stamp}</p>
           <h2 id="detail-title">{territory.name}</h2>
           <p>{territory.summary}</p>
         </header>
@@ -294,24 +388,50 @@ function TerritoryDetail({ territory, onClose, onContact }) {
 function BoardView({ onReview }) {
   const [activeId, setActiveId] = useState("lead");
   const [dieValue, setDieValue] = useState(1);
-  const [dieHistory, setDieHistory] = useState([1, 4, 6]);
   const [rollKey, setRollKey] = useState(0);
+  const [diceMessage, setDiceMessage] = useState("تاس روی ۱ است: از رهبری شروع کنیم.");
+  const [mobileCaseOpen, setMobileCaseOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [contactTitle, setContactTitle] = useState("");
   const active = content.territories.find((item) => item.id === activeId) ?? content.territories[0];
+
+  useEffect(() => {
+    if (!mobileCaseOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event) => event.key === "Escape" && setMobileCaseOpen(false);
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [mobileCaseOpen]);
+
+  const revealMobileCase = () => {
+    if (window.matchMedia("(max-width: 900px)").matches) setMobileCaseOpen(true);
+  };
 
   const choose = (id) => {
     const territory = content.territories.find((item) => item.id === id);
     setActiveId(id);
     setDieValue(territory.face);
-    setDieHistory((current) => [territory.face, ...current].slice(0, 3));
     setRollKey((key) => key + 1);
+    setDiceMessage(`${faNumber(territory.face)} یعنی ${territory.name}؛ انتخاب شما همین‌جاست.`);
+    revealMobileCase();
   };
 
   const roll = () => {
-    const candidates = content.territories.filter((item) => item.id !== activeId);
-    const territory = candidates[Math.floor(Math.random() * candidates.length)];
-    choose(territory.id);
+    const value = Math.floor(Math.random() * 6) + 1;
+    setDieValue(value);
+    setRollKey((key) => key + 1);
+    if (value === 6) {
+      setDiceMessage("۶ آمد؛ این بار انتخاب کاملاً با شماست.");
+      return;
+    }
+    const territory = content.territories.find((item) => item.face === value);
+    setActiveId(territory.id);
+    setDiceMessage(`${faNumber(value)} آمد: ${territory.name}. این مسیر را باز کردم.`);
+    revealMobileCase();
   };
 
   return (
@@ -328,23 +448,17 @@ function BoardView({ onReview }) {
         <div className="tabletop-layout">
           <ProfileCard />
           <div className="play-board">
-            <BoardMap activeId={activeId} setActiveId={choose} />
-            <div className="dice-station">
-              <div className="dice-station__well" aria-label="سه انتخاب اخیر روی تاس‌ها">
-                {dieHistory.map((value, index) => (
-                  <Dice3D key={`${value}-${index}-${rollKey}`} value={value} rollKey={index === 0 ? rollKey : 0} />
-                ))}
-              </div>
-              <div>
-                <p>اگر میان مسیرها مردد مانده‌اید</p>
-                <strong>پیشنهاد تاس: {active.name}</strong>
-                <Button kind="quiet" icon={DiceFive} onClick={roll}>بگذارید تاس پیشنهاد بدهد</Button>
-              </div>
+            <div className="mobile-board-prompt">
+              <Compass size={24} weight="duotone" />
+              <div><b>از کدام مسیر شروع کنیم؟</b><span>یک کارت را انتخاب کنید یا تاس را بیندازید.</span></div>
             </div>
+            <DiceStation value={dieValue} rollKey={rollKey} message={diceMessage} onRoll={roll} />
+            <BoardMap activeId={activeId} setActiveId={choose} />
           </div>
           <CaseFile territory={active} onOpenDetail={() => setDetailOpen(true)} onContact={setContactTitle} />
         </div>
         <MethodTrack />
+        <ProjectShelf />
         <section className="interview-strip paper-surface">
           <img src={assetPath("omid-interview-poster.jpg")} alt="تصویر مصاحبه‌ی امید حیدری" />
           <div>
@@ -359,6 +473,13 @@ function BoardView({ onReview }) {
           <a href={content.meta.creatorUrl}>طراحی تجربه و روایت: یاس دستان</a>
         </footer>
       </main>
+      <MobilePathSheet
+        territory={active}
+        open={mobileCaseOpen}
+        onClose={() => setMobileCaseOpen(false)}
+        onOpenDetail={() => { setMobileCaseOpen(false); setDetailOpen(true); }}
+        onContact={(title) => { setMobileCaseOpen(false); setContactTitle(title); }}
+      />
       {detailOpen ? <TerritoryDetail territory={active} onClose={() => setDetailOpen(false)} onContact={(title) => { setDetailOpen(false); setContactTitle(title); }} /> : null}
       {contactTitle ? <ContactSheet title={contactTitle} onClose={() => setContactTitle("")} /> : null}
     </>
@@ -414,7 +535,7 @@ function CVView({ onReview }) {
             </section>
             <section>
               <h2>راه‌های گفت‌وگو</h2>
-              <a href={content.meta.linkedin} target="_blank" rel="noreferrer"><LinkedinLogo size={18} />لینکدین من</a>
+              <ContactLinks compact />
               <a href={content.meta.aparat} target="_blank" rel="noreferrer"><Play size={18} />مصاحبه‌ی من در آپارات</a>
             </section>
           </aside>
@@ -425,57 +546,97 @@ function CVView({ onReview }) {
   );
 }
 
-const puzzleOptions = [
-  { id: "a", invalid: false, faces: [3, 2, 1, 5, 6, 4] },
-  { id: "b", invalid: true, faces: [3, 2, 1, 6, 5, 4] },
-  { id: "c", invalid: false, faces: [2, 3, 1, 4, 6, 5] },
-];
+function createSecret() {
+  const values = [1, 2, 3, 4, 5, 6];
+  for (let index = values.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(Math.random() * (index + 1));
+    [values[index], values[swap]] = [values[swap], values[index]];
+  }
+  return values.slice(0, 3);
+}
 
-function DiceNet({ option, selected, onSelect }) {
+function scoreGuess(secret, guess) {
+  const exact = guess.filter((value, index) => value === secret[index]).length;
+  const shared = guess.filter((value) => secret.includes(value)).length;
+  return { exact, misplaced: shared - exact };
+}
+
+function PuzzleDie({ value, index, onChange, disabled }) {
+  const change = (step) => {
+    const next = value + step > 6 ? 1 : value + step < 1 ? 6 : value + step;
+    onChange(index, next);
+  };
+
   return (
-    <button className={`dice-net${selected ? " is-selected" : ""}`} onClick={() => onSelect(option)} aria-pressed={selected}>
-      <span className="dice-net__label">گزینه‌ی {option.id.toUpperCase()}</span>
-      <span className="dice-net__grid" aria-label={`گسترده‌ی تاس گزینه‌ی ${option.id}`}>
-        <i className="face face--top">{option.faces[0]}</i>
-        <i className="face face--left">{option.faces[1]}</i>
-        <i className="face face--center">{option.faces[2]}</i>
-        <i className="face face--right">{option.faces[3]}</i>
-        <i className="face face--far">{option.faces[4]}</i>
-        <i className="face face--bottom">{option.faces[5]}</i>
-      </span>
-      <b>این گسترده غیرممکن است</b>
-    </button>
+    <div className="code-die">
+      <button onClick={() => change(1)} disabled={disabled} aria-label={`زیادکردن تاس ${faNumber(index + 1)}`}><Plus size={19} /></button>
+      <div className="code-die__well"><Dice3D value={value} compact /></div>
+      <button onClick={() => change(-1)} disabled={disabled} aria-label={`کم‌کردن تاس ${faNumber(index + 1)}`}><Minus size={19} /></button>
+    </div>
   );
 }
 
 function PuzzleView({ onReview }) {
-  const [choice, setChoice] = useState(null);
-  const [answered, setAnswered] = useState(false);
-  const correct = choice?.invalid;
+  const [secret, setSecret] = useState(createSecret);
+  const [guess, setGuess] = useState([1, 2, 3]);
+  const [attempts, setAttempts] = useState([]);
+  const [status, setStatus] = useState("playing");
+
+  const changeDie = (index, value) => setGuess((current) => current.map((item, itemIndex) => itemIndex === index ? value : item));
+  const submitGuess = () => {
+    const score = scoreGuess(secret, guess);
+    const nextAttempts = [...attempts, { guess: [...guess], ...score }];
+    setAttempts(nextAttempts);
+    if (score.exact === 3) setStatus("won");
+    else if (nextAttempts.length >= 5) setStatus("lost");
+  };
+  const newRound = () => {
+    setSecret(createSecret());
+    setGuess([1, 2, 3]);
+    setAttempts([]);
+    setStatus("playing");
+  };
+
   return (
     <>
       <UtilityNav view="puzzle" onReview={onReview} />
       <main id="main-content" className="puzzle-view">
         <section className="puzzle-brief paper-surface">
-          <p className="eyebrow">یک چالش کوتاه از طرف من؛ کاملاً اختیاری</p>
-          <h1>کدام تاس نمی‌تواند واقعی باشد؟</h1>
-          <p>در تاس استاندارد، وجه‌های مقابل مجموعاً ۷ می‌شوند. یکی از این سه گسترده این قانون را می‌شکند. پیدایش می‌کنید؟</p>
-          <div className="puzzle-brief__rule"><BookOpen size={24} /><span>۱ مقابل ۶ · ۲ مقابل ۵ · ۳ مقابل ۴</span></div>
+          <p className="eyebrow">یک بازی کوتاه از طرف من؛ کاملاً اختیاری</p>
+          <h1>قفل سه‌تاس</h1>
+          <p>سه عدد متفاوت از ۱ تا ۶ پشت این قفل پنهان شده‌اند. ترتیب هم مهم است. پنج بار فرصت دارید ترکیب را پیدا کنید.</p>
+          <div className="puzzle-brief__rule"><BookOpen size={24} /><span><b>جای درست</b> یعنی عدد و موقعیت هر دو درست‌اند. <b>جای دیگر</b> یعنی عدد در رمز هست، اما نه در آن موقعیت.</span></div>
         </section>
-        <section className="puzzle-options" aria-label="گزینه‌های معمای تاس">
-          {puzzleOptions.map((option) => <DiceNet key={option.id} option={option} selected={choice?.id === option.id} onSelect={(next) => { setChoice(next); setAnswered(false); }} />)}
+        <section className="code-board" aria-label="بازی قفل سه‌تاس">
+          <div className="code-board__tray">
+            {guess.map((value, index) => <PuzzleDie key={index} value={value} index={index} onChange={changeDie} disabled={status !== "playing"} />)}
+          </div>
+          <div className="code-board__actions">
+            <Button icon={Target} onClick={submitGuess} disabled={status !== "playing" || new Set(guess).size !== 3}>ثبت این ترکیب</Button>
+            <small>{new Set(guess).size !== 3 ? "هر سه عدد باید متفاوت باشند." : `${faNumber(5 - attempts.length)} تلاش مانده`}</small>
+          </div>
+          <ol className="attempt-log" aria-label="تلاش‌های ثبت‌شده">
+            {attempts.length ? attempts.map((attempt, index) => (
+              <li key={`${attempt.guess.join("-")}-${index}`}>
+                <span>{faNumber(index + 1)}</span>
+                <b dir="ltr">{attempt.guess.map(faNumber).join(" · ")}</b>
+                <em>{faNumber(attempt.exact)} جای درست</em>
+                <em>{faNumber(attempt.misplaced)} جای دیگر</em>
+              </li>
+            )) : <li className="attempt-log__empty">اولین ترکیب را بسازید؛ نتیجه‌ی هر تلاش همین‌جا می‌ماند.</li>}
+          </ol>
         </section>
         <div className="puzzle-actions">
-          <Button icon={Target} disabled={!choice} onClick={() => setAnswered(true)}>بررسی پاسخ</Button>
+          <Button kind="quiet" icon={DiceFive} onClick={newRound}>رمز تازه</Button>
           <Button kind="ink" icon={ArrowRight} onClick={() => go("board")}>بازگشت به میز</Button>
         </div>
-        {answered ? (
-          <section className={`puzzle-result paper-surface ${correct ? "is-correct" : "is-wrong"}`} role="status">
-            <div className="puzzle-result__die"><Dice3D value={correct ? 6 : 3} compact /></div>
+        {status !== "playing" ? (
+          <section className={`puzzle-result paper-surface ${status === "won" ? "is-correct" : "is-wrong"}`} role="status">
+            <div className="puzzle-result__secret" dir="ltr">{secret.map((value) => <Dice3D key={value} value={value} />)}</div>
             <div>
-              <h2>{correct ? "درست بود." : "این یکی در واقع ممکن است."}</h2>
-              <p>{correct ? "در گزینه‌ی B، دو وجهی که باید مقابل هم باشند در جایگاه کناری قرار گرفته‌اند." : "یک بار دیگر نسبت وجه‌های مقابل را با جای آن‌ها روی گسترده مقایسه کن."}</p>
-              <small>این معما آزمون استخدامی نیست؛ فقط یکی از مکث‌های بازی‌گونه‌ای است که دوست دارم با شما قسمت کنم.</small>
+              <h2>{status === "won" ? "قفل باز شد." : "این رمز جان سالم به در برد."}</h2>
+              <p>{status === "won" ? `در ${faNumber(attempts.length)} تلاش پیدایش کردید.` : `رمز ${secret.map(faNumber).join("، ")} بود. دور بعدی رمز تازه‌ای دارد.`}</p>
+              <Button kind="ink" icon={DiceFive} onClick={newRound}>یک دور دیگر</Button>
             </div>
           </section>
         ) : null}
@@ -486,13 +647,13 @@ function PuzzleView({ onReview }) {
 
 function ReviewDrawer({ open, onClose }) {
   const [answers, setAnswers] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("omid-v02-review")) ?? {}; }
+    try { return JSON.parse(localStorage.getItem("omid-v03-review")) ?? {}; }
     catch { return {}; }
   });
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("omid-v02-review", JSON.stringify(answers));
+    localStorage.setItem("omid-v03-review", JSON.stringify(answers));
     setSaved(true);
     const timer = window.setTimeout(() => setSaved(false), 900);
     return () => window.clearTimeout(timer);
@@ -503,7 +664,7 @@ function ReviewDrawer({ open, onClose }) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "omid-portfolio-review-v02.json";
+    anchor.download = "omid-portfolio-review-v03.json";
     anchor.click();
     URL.revokeObjectURL(url);
   };
