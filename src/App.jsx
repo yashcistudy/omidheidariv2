@@ -20,7 +20,6 @@ import {
   PaperPlaneTilt,
   Play,
   Plus,
-  SealCheck,
   Stack,
   Target,
   UsersThree,
@@ -179,14 +178,14 @@ function TerritoryTile({ territory, active, onSelect }) {
   );
 }
 
-function BoardMap({ activeId, setActiveId }) {
+function BoardMap({ activeId, setActiveId, onOpenGuide }) {
   return (
     <section className="board-map" aria-label="قلمروهای تجربه‌ی امید">
-      <div className="board-map__hub">
+      <button className="board-map__hub" type="button" onClick={onOpenGuide} aria-label="راهنمای میز بازی">
         <Compass size={30} weight="duotone" aria-hidden="true" />
-        <p>دوست دارید از کدام مسیر شروع کنیم؟</p>
-        <small>یکی را بردارید</small>
-      </div>
+        <p>این میز چطور کار می‌کند؟</p>
+        <small>برای راهنما بزنید</small>
+      </button>
       {content.territories.map((territory) => (
         <TerritoryTile
           key={territory.id}
@@ -219,11 +218,6 @@ function CaseFile({ territory, onOpenDetail, onContact }) {
           </div>
         ))}
       </dl>
-      <div className="evidence-slip">
-        <SealCheck size={22} weight="duotone" />
-        <span><b>چیزی که می‌توانید بررسی کنید</b>{territory.proof}</span>
-        <small>{territory.evidenceStatus}</small>
-      </div>
       <div className="case-file__actions">
         <Button icon={ArrowLeft} onClick={onOpenDetail}>این مسیر را بیشتر ببینید</Button>
         <Button kind="ink" icon={Briefcase} onClick={() => onContact(territory.cta)}>{territory.cta}</Button>
@@ -245,19 +239,50 @@ function MobilePathSheet({ territory, open, onClose, onOpenDetail, onContact }) 
   );
 }
 
-function DiceStation({ value, rollKey, message, onRoll }) {
+function DiceStation({ values, rollKey, message, selectedValue, onRoll, onDraft }) {
   return (
-    <section className="dice-station" aria-label="تاس انتخاب مسیر">
+    <section className="dice-station" aria-label="انتخاب تاس و مسیر">
       <div className="dice-station__well">
-        <Dice3D value={value} rollKey={rollKey} />
+        {values.map((value, index) => (
+          <button
+            className={`draft-die${selectedValue === value ? " is-selected" : ""}`}
+            type="button"
+            key={`${value}-${index}`}
+            onClick={() => onDraft(value)}
+            aria-label={`انتخاب تاس ${faNumber(value)}`}
+            aria-pressed={selectedValue === value}
+          >
+            <Dice3D value={value} rollKey={rollKey} compact />
+            <span>{faNumber(value)}</span>
+          </button>
+        ))}
       </div>
       <div className="dice-station__copy">
-        <p>اگر انتخاب را بسپارید به شانس</p>
+        <p>سه تاس؛ سه راه برای شروع</p>
         <strong>{message}</strong>
         <small>۱ رهبری · ۲ ساختن · ۳ بازی · ۴ دور یک میز · ۵ با تیم · ۶ انتخاب آزاد</small>
-        <Button kind="quiet" icon={DiceFive} onClick={onRoll}>تاس را بیندازید</Button>
+        <Button kind="quiet" icon={DiceFive} onClick={onRoll}>سه تاس تازه</Button>
       </div>
     </section>
+  );
+}
+
+function BoardGuide({ onClose }) {
+  return (
+    <div className="modal-layer" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <section className="board-guide paper-surface" role="dialog" aria-modal="true" aria-labelledby="board-guide-title">
+        <button className="icon-button" onClick={onClose} aria-label="بستن"><X size={22} /></button>
+        <p className="eyebrow">راهنمای میز</p>
+        <h2 id="board-guide-title">یک تاس بردارید، آن را روی یک مسیر بگذارید و نتیجه را ببینید.</h2>
+        <ol>
+          <li><DiceFive size={25} weight="duotone" aria-hidden="true" /><div><b>۱. انتخاب</b><span>سه تاس روی میز می‌آید. یکی را انتخاب کنید؛ هر عدد یک مسیر را باز می‌کند.</span></div></li>
+          <li><Target size={25} weight="duotone" aria-hidden="true" /><div><b>۲. جای‌گذاری</b><span>تاس روی خانه‌ی هم‌عدد می‌نشیند. ۶ آزاد است و می‌توانید آن را روی هر خانه بگذارید.</span></div></li>
+          <li><Check size={25} weight="duotone" aria-hidden="true" /><div><b>۳. دیدن نتیجه</b><span>خانه‌ی انتخابی روشن می‌شود و تجربه، تصمیم‌ها و نتیجه‌ی کار من در همان مسیر نمایش داده می‌شود.</span></div></li>
+        </ol>
+        <p className="board-guide__note">مثل یک بازی خوب، تاس فقط شانس نیست؛ چیزی است که انتخاب می‌کنید کجا قرار بگیرد. اگر نخواستید از تاس استفاده کنید، هر خانه را مستقیم انتخاب کنید.</p>
+        <Button icon={ArrowLeft} onClick={onClose}>متوجه شدم؛ برگردیم به میز</Button>
+      </section>
+    </div>
   );
 }
 
@@ -310,12 +335,83 @@ function ProjectShelf() {
       </div>
       <div className="studio-stamps" aria-label="مجموعه‌ها و برندهای مرتبط">
         {content.studios.map((studio) => (
-          <figure key={studio.name} className="studio-stamp paper-surface">
-            <img src={assetPath(studio.image)} alt={`نشان ${studio.name}`} />
-            <figcaption><b>{studio.name}</b><span>{studio.kind}</span></figcaption>
-          </figure>
+          <article key={studio.name} className="studio-stamp paper-surface">
+            {studio.url ? (
+              <a className="studio-stamp__main" href={studio.url} target="_blank" rel="noreferrer">
+                <span className="studio-stamp__brand">
+                  <img src={assetPath(studio.image)} alt={`نشان ${studio.name}`} />
+                  <span><b>{studio.name}</b><small>{studio.kind}</small></span>
+                </span>
+                <span className="studio-stamp__role">{studio.role}</span>
+                <span className="studio-stamp__visit">دیدن وب‌سایت <Export size={16} aria-hidden="true" /></span>
+              </a>
+            ) : (
+              <div className="studio-stamp__main">
+                <span className="studio-stamp__brand">
+                  <img src={assetPath(studio.image)} alt={`نشان ${studio.name}`} />
+                  <span><b>{studio.name}</b><small>{studio.kind}</small></span>
+                </span>
+                <span className="studio-stamp__role">{studio.role}</span>
+              </div>
+            )}
+            {studio.instagram ? (
+              <a className="studio-stamp__instagram" href={studio.instagram} target="_blank" rel="noreferrer">
+                <InstagramLogo size={17} aria-hidden="true" />اینستاگرام گیک‌بازی
+              </a>
+            ) : null}
+          </article>
         ))}
       </div>
+      <SunGamesShelf />
+    </section>
+  );
+}
+
+function SunGameCard({ game }) {
+  const body = (
+    <>
+      <span className={`sun-game-card__visual${game.image ? "" : " is-placeholder"}`}>
+        <img
+          src={assetPath(game.image || "brand-sun-games.svg")}
+          alt={game.image ? `جعبه‌ی بازی ${game.title}` : ""}
+        />
+      </span>
+      <span className="sun-game-card__copy">
+        <b>{game.title}</b>
+        <small>{game.status}</small>
+      </span>
+    </>
+  );
+
+  return game.url ? (
+    <a className="sun-game-card" href={game.url} target="_blank" rel="noreferrer">{body}</a>
+  ) : (
+    <article className="sun-game-card" aria-label={`${game.title}؛ ${game.status}`}>{body}</article>
+  );
+}
+
+function SunGamesShelf() {
+  return (
+    <section className="sun-games-shelf paper-surface" aria-labelledby="sun-games-title">
+      <header>
+        <p className="eyebrow">از طراحی تا قفسه‌ی فروشگاه</p>
+        <h3 id="sun-games-title">بازی‌های سان‌گیمز</h3>
+        <p>این بازی‌ها با رهبری طراحی من و همکاری تیم ساخته شده‌اند و اکنون در بازار ایران، از دیجی‌کالا و اسنپ‌شاپ تا فروشگاه‌های بازی، عرضه می‌شوند.</p>
+      </header>
+      <div className="sun-games-shelf__rail" aria-label="فهرست بازی‌های سان‌گیمز">
+        {content.sunGames.map((game) => <SunGameCard key={game.title} game={game} />)}
+      </div>
+      <div className="sun-games-team">
+        <p><b>تیمی که این بازی‌ها را ساخته است</b><span>من جهت طراحی و مسیر محصول را رهبری کرده‌ام؛ ساخت و انتشار، کار یک تیم چندتخصصی است.</span></p>
+        <dl>
+          {content.sunGamesTeam.map((member) => (
+            <div key={member.name}><dt>{member.name}</dt><dd>{member.role}</dd></div>
+          ))}
+        </dl>
+      </div>
+      <a className="sun-games-shelf__link" href="https://sungame.ir" target="_blank" rel="noreferrer">
+        همه‌ی بازی‌ها در سان‌گیمز <ArrowLeft size={18} aria-hidden="true" />
+      </a>
     </section>
   );
 }
@@ -375,10 +471,6 @@ function TerritoryDetail({ territory, onClose, onContact }) {
             </section>
           ))}
         </div>
-        <div className="detail-sheet__proof">
-          <SealCheck size={26} weight="duotone" />
-          <div><b>وضعیت شواهد</b><p>{territory.evidenceStatus}</p></div>
-        </div>
         <Button icon={ArrowLeft} onClick={() => onContact(territory.cta)}>{territory.cta}</Button>
       </article>
     </div>
@@ -387,9 +479,12 @@ function TerritoryDetail({ territory, onClose, onContact }) {
 
 function BoardView({ onReview }) {
   const [activeId, setActiveId] = useState("lead");
-  const [dieValue, setDieValue] = useState(1);
+  const [diceValues, setDiceValues] = useState([1, 3, 5]);
+  const [selectedValue, setSelectedValue] = useState(1);
+  const [freeChoice, setFreeChoice] = useState(false);
   const [rollKey, setRollKey] = useState(0);
-  const [diceMessage, setDiceMessage] = useState("تاس روی ۱ است: از رهبری شروع کنیم.");
+  const [diceMessage, setDiceMessage] = useState("یکی از سه تاس را بردارید؛ مسیر همان عدد روی میز باز می‌شود.");
+  const [guideOpen, setGuideOpen] = useState(false);
   const [mobileCaseOpen, setMobileCaseOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [contactTitle, setContactTitle] = useState("");
@@ -414,23 +509,40 @@ function BoardView({ onReview }) {
   const choose = (id) => {
     const territory = content.territories.find((item) => item.id === id);
     setActiveId(id);
-    setDieValue(territory.face);
+    setSelectedValue(freeChoice ? 6 : territory.face);
+    setFreeChoice(false);
     setRollKey((key) => key + 1);
-    setDiceMessage(`${faNumber(territory.face)} یعنی ${territory.name}؛ انتخاب شما همین‌جاست.`);
+    setDiceMessage(freeChoice
+      ? `۶ را روی خانه‌ی «${territory.name}» گذاشتید؛ نتیجه‌ی این مسیر آماده است.`
+      : `خانه‌ی «${territory.name}» را انتخاب کردید؛ نتیجه‌ی این مسیر آماده است.`);
     revealMobileCase();
   };
 
   const roll = () => {
-    const value = Math.floor(Math.random() * 6) + 1;
-    setDieValue(value);
+    const pool = [1, 2, 3, 4, 5, 6];
+    const nextValues = [];
+    while (nextValues.length < 3) {
+      const index = Math.floor(Math.random() * pool.length);
+      nextValues.push(pool.splice(index, 1)[0]);
+    }
+    setDiceValues(nextValues);
+    setSelectedValue(null);
+    setFreeChoice(false);
     setRollKey((key) => key + 1);
+    setDiceMessage("سه تاس تازه روی میز است. یکی را بردارید و مسیرش را باز کنید.");
+  };
+
+  const draft = (value) => {
+    setSelectedValue(value);
     if (value === 6) {
-      setDiceMessage("۶ آمد؛ این بار انتخاب کاملاً با شماست.");
+      setFreeChoice(true);
+      setDiceMessage("۶ آزاد است؛ حالا هر خانه‌ای را که می‌خواهید انتخاب کنید.");
       return;
     }
+    setFreeChoice(false);
     const territory = content.territories.find((item) => item.face === value);
     setActiveId(territory.id);
-    setDiceMessage(`${faNumber(value)} آمد: ${territory.name}. این مسیر را باز کردم.`);
+    setDiceMessage(`${faNumber(value)} را برداشتید و روی خانه‌ی «${territory.name}» گذاشتید.`);
     revealMobileCase();
   };
 
@@ -452,8 +564,8 @@ function BoardView({ onReview }) {
               <Compass size={24} weight="duotone" />
               <div><b>از کدام مسیر شروع کنیم؟</b><span>یک کارت را انتخاب کنید یا تاس را بیندازید.</span></div>
             </div>
-            <DiceStation value={dieValue} rollKey={rollKey} message={diceMessage} onRoll={roll} />
-            <BoardMap activeId={activeId} setActiveId={choose} />
+            <DiceStation values={diceValues} rollKey={rollKey} message={diceMessage} selectedValue={selectedValue} onRoll={roll} onDraft={draft} />
+            <BoardMap activeId={activeId} setActiveId={choose} onOpenGuide={() => setGuideOpen(true)} />
           </div>
           <CaseFile territory={active} onOpenDetail={() => setDetailOpen(true)} onContact={setContactTitle} />
         </div>
@@ -480,6 +592,7 @@ function BoardView({ onReview }) {
         onOpenDetail={() => { setMobileCaseOpen(false); setDetailOpen(true); }}
         onContact={(title) => { setMobileCaseOpen(false); setContactTitle(title); }}
       />
+      {guideOpen ? <BoardGuide onClose={() => setGuideOpen(false)} /> : null}
       {detailOpen ? <TerritoryDetail territory={active} onClose={() => setDetailOpen(false)} onContact={(title) => { setDetailOpen(false); setContactTitle(title); }} /> : null}
       {contactTitle ? <ContactSheet title={contactTitle} onClose={() => setContactTitle("")} /> : null}
     </>
@@ -515,7 +628,6 @@ function CVView({ onReview }) {
                 <div>
                   <h3>{job.title}</h3>
                   <ul>{job.points.map((point) => <li key={point}>{point}</li>)}</ul>
-                  {job.note ? <p className="evidence-note"><Info size={17} />{job.note}</p> : null}
                 </div>
               </article>
             ))}
@@ -569,9 +681,10 @@ function PuzzleDie({ value, index, onChange, disabled }) {
 
   return (
     <div className="code-die">
-      <button onClick={() => change(1)} disabled={disabled} aria-label={`زیادکردن تاس ${faNumber(index + 1)}`}><Plus size={19} /></button>
+      <span className="code-die__label">جایگاه {faNumber(index + 1)}</span>
+      <button onClick={() => change(1)} disabled={disabled} aria-label={`عدد بعدی برای جایگاه ${faNumber(index + 1)}`} title="عدد بعدی"><Plus size={19} /></button>
       <div className="code-die__well"><Dice3D value={value} compact /></div>
-      <button onClick={() => change(-1)} disabled={disabled} aria-label={`کم‌کردن تاس ${faNumber(index + 1)}`}><Minus size={19} /></button>
+      <button onClick={() => change(-1)} disabled={disabled} aria-label={`عدد قبلی برای جایگاه ${faNumber(index + 1)}`} title="عدد قبلی"><Minus size={19} /></button>
     </div>
   );
 }
@@ -603,40 +716,59 @@ function PuzzleView({ onReview }) {
       <main id="main-content" className="puzzle-view">
         <section className="puzzle-brief paper-surface">
           <p className="eyebrow">یک بازی کوتاه از طرف من؛ کاملاً اختیاری</p>
-          <h1>قفل سه‌تاس</h1>
-          <p>سه عدد متفاوت از ۱ تا ۶ پشت این قفل پنهان شده‌اند. ترتیب هم مهم است. پنج بار فرصت دارید ترکیب را پیدا کنید.</p>
-          <div className="puzzle-brief__rule"><BookOpen size={24} /><span><b>جای درست</b> یعنی عدد و موقعیت هر دو درست‌اند. <b>جای دیگر</b> یعنی عدد در رمز هست، اما نه در آن موقعیت.</span></div>
+          <h1>رمز سه‌تاس را پیدا کنید</h1>
+          <p>من یک رمز سه‌عددی ساخته‌ام. هر عدد بین ۱ تا ۶ است، هیچ عددی تکرار نمی‌شود و ترتیب عددها مهم است. شما پنج تلاش دارید.</p>
+          <div className="puzzle-brief__rule">
+            <BookOpen size={24} aria-hidden="true" />
+            <div>
+              <b>چطور بازی کنید؟</b>
+              <ol>
+                <li>با دکمه‌های + و − عدد هر تاس را عوض کنید.</li>
+                <li>وقتی سه عدد متفاوت ساختید، «این ترکیب را امتحان کنید» را بزنید.</li>
+                <li>از دو راهنمایی که می‌گیرید برای حدس بعدی استفاده کنید.</li>
+              </ol>
+            </div>
+          </div>
+          <div className="puzzle-example" aria-label="نمونه‌ی نتیجه‌ی یک تلاش">
+            <b>یک مثال کوتاه</b>
+            <p>اگر رمز پنهان <span dir="ltr">۴ · ۲ · ۶</span> باشد و شما <span dir="ltr">۴ · ۶ · ۱</span> را امتحان کنید:</p>
+            <ul>
+              <li><strong>۱ عدد در جای درست</strong> دارید: ۴ هم در رمز هست و هم درست قرار گرفته.</li>
+              <li><strong>۱ عدد در جای دیگر</strong> دارید: ۶ در رمز هست، اما باید جابه‌جا شود.</li>
+            </ul>
+            <small>راهنما تعداد را می‌گوید، اما نمی‌گوید دقیقاً کدام تاس درست بوده؛ بخش استنتاجی بازی همین‌جاست.</small>
+          </div>
         </section>
         <section className="code-board" aria-label="بازی قفل سه‌تاس">
           <div className="code-board__tray">
             {guess.map((value, index) => <PuzzleDie key={index} value={value} index={index} onChange={changeDie} disabled={status !== "playing"} />)}
           </div>
           <div className="code-board__actions">
-            <Button icon={Target} onClick={submitGuess} disabled={status !== "playing" || new Set(guess).size !== 3}>ثبت این ترکیب</Button>
-            <small>{new Set(guess).size !== 3 ? "هر سه عدد باید متفاوت باشند." : `${faNumber(5 - attempts.length)} تلاش مانده`}</small>
+            <Button icon={Target} onClick={submitGuess} disabled={status !== "playing" || new Set(guess).size !== 3}>این ترکیب را امتحان کنید</Button>
+            <small>{new Set(guess).size !== 3 ? "در رمز عدد تکراری نداریم؛ یکی از تاس‌ها را تغییر دهید." : `${faNumber(5 - attempts.length)} تلاش مانده؛ نتیجه‌ی هر تلاش پایین ثبت می‌شود.`}</small>
           </div>
           <ol className="attempt-log" aria-label="تلاش‌های ثبت‌شده">
             {attempts.length ? attempts.map((attempt, index) => (
               <li key={`${attempt.guess.join("-")}-${index}`}>
                 <span>{faNumber(index + 1)}</span>
                 <b dir="ltr">{attempt.guess.map(faNumber).join(" · ")}</b>
-                <em>{faNumber(attempt.exact)} جای درست</em>
-                <em>{faNumber(attempt.misplaced)} جای دیگر</em>
+                <em>{faNumber(attempt.exact)} عدد در جای درست</em>
+                <em>{faNumber(attempt.misplaced)} عدد در جای دیگر</em>
               </li>
-            )) : <li className="attempt-log__empty">اولین ترکیب را بسازید؛ نتیجه‌ی هر تلاش همین‌جا می‌ماند.</li>}
+            )) : <li className="attempt-log__empty">سه عدد متفاوت انتخاب کنید و اولین ترکیب را امتحان کنید. راهنمای همان تلاش اینجا ظاهر می‌شود.</li>}
           </ol>
         </section>
         <div className="puzzle-actions">
-          <Button kind="quiet" icon={DiceFive} onClick={newRound}>رمز تازه</Button>
+          <Button kind="quiet" icon={DiceFive} onClick={newRound}>شروع با یک رمز تازه</Button>
           <Button kind="ink" icon={ArrowRight} onClick={() => go("board")}>بازگشت به میز</Button>
         </div>
         {status !== "playing" ? (
           <section className={`puzzle-result paper-surface ${status === "won" ? "is-correct" : "is-wrong"}`} role="status">
             <div className="puzzle-result__secret" dir="ltr">{secret.map((value) => <Dice3D key={value} value={value} />)}</div>
             <div>
-              <h2>{status === "won" ? "قفل باز شد." : "این رمز جان سالم به در برد."}</h2>
-              <p>{status === "won" ? `در ${faNumber(attempts.length)} تلاش پیدایش کردید.` : `رمز ${secret.map(faNumber).join("، ")} بود. دور بعدی رمز تازه‌ای دارد.`}</p>
-              <Button kind="ink" icon={DiceFive} onClick={newRound}>یک دور دیگر</Button>
+              <h2>{status === "won" ? "رمز را پیدا کردید." : "پنج تلاش تمام شد."}</h2>
+              <p>{status === "won" ? `در ${faNumber(attempts.length)} تلاش به ترتیب درست رسیدید.` : `رمز ${secret.map(faNumber).join("، ")} بود. اگر دوباره بازی کنید، یک رمز کاملاً تازه می‌سازم.`}</p>
+              <Button kind="ink" icon={DiceFive} onClick={newRound}>یک رمز دیگر</Button>
             </div>
           </section>
         ) : null}
