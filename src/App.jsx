@@ -98,11 +98,19 @@ function UtilityNav({ view, onReview }) {
       <nav aria-label="مسیرهای اصلی">
         <button className={view === "board" ? "is-active" : ""} onClick={() => go("board")}>میز بازی</button>
         <button className={view === "cv" ? "is-active" : ""} onClick={() => go("cv")}>رزومه</button>
-        <button className={view === "puzzle" ? "is-active" : ""} onClick={() => go("puzzle")}>معمای اختیاری</button>
+        <button className={view === "puzzle" ? "is-active" : ""} onClick={() => go("puzzle")}>بازی سه‌تاس</button>
         <a href={assetPath("Omid-Heidari-CV.pdf")} download>دانلود PDF</a>
         <button onClick={onReview}>بازبینی نسخه‌ی {content.meta.version}</button>
       </nav>
     </header>
+  );
+}
+
+function ExperienceCredit({ className = "" }) {
+  return (
+    <p className={`experience-credit ${className}`.trim()}>
+      طراحی تجربه و روایت: <a href={content.meta.creatorUrl}>یاس دستان</a>
+    </p>
   );
 }
 
@@ -134,9 +142,7 @@ function Entry({ onReview }) {
           <p>برای من، بازی پوسته‌ی کار نیست؛ روشی برای فکرکردن است.</p>
         </div>
       </section>
-      <p className="entry-credit">
-        طراحی تجربه و روایت: <a href={content.meta.creatorUrl}>یاس دستان</a>
-      </p>
+      <ExperienceCredit className="entry-credit" />
     </main>
   );
 }
@@ -416,6 +422,21 @@ function SunGamesShelf() {
   );
 }
 
+function AparatInterview() {
+  useEffect(() => {
+    const container = document.getElementById("34360096323");
+    if (!container || container.dataset.loaded === "true") return undefined;
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "https://www.aparat.com/embed/tcp4v2r?data[rnddiv]=34360096323&data[responsive]=yes&muted=true&titleShow=true";
+    container.dataset.loaded = "true";
+    container.appendChild(script);
+    return undefined;
+  }, []);
+
+  return <div id="34360096323" className="interview-embed" aria-label="ویدیوی مصاحبه با امید حیدری" />;
+}
+
 function ContactLinks({ compact = false }) {
   return (
     <div className={`contact-links${compact ? " contact-links--compact" : ""}`}>
@@ -572,17 +593,16 @@ function BoardView({ onReview }) {
         <MethodTrack />
         <ProjectShelf />
         <section className="interview-strip paper-surface">
-          <img src={assetPath("omid-interview-poster.jpg")} alt="تصویر مصاحبه‌ی امید حیدری" />
+          <AparatInterview />
           <div>
             <p className="eyebrow">اگر ترجیح می‌دهید از زبان خودم بشنوید</p>
             <h2>این مسیر را با صدای خودم تعریف کرده‌ام</h2>
-            <p>مصاحبه‌ی کامل من در آپارات است؛ بدون پخش خودکار و بدون اینکه مسیرتان را قطع کند.</p>
-            <LinkButton icon={Play} href={content.meta.aparat} target="_blank" rel="noreferrer">مصاحبه‌ی من را ببینید</LinkButton>
+            <p>مصاحبه را همین‌جا می‌توانید ببینید؛ ویدیو بدون پخش خودکار منتظر انتخاب شما می‌ماند.</p>
           </div>
         </section>
         <footer className="site-footer">
           <span>نسخه‌ی آزمایشی {content.meta.version}؛ ادعاهای نیازمند سند عمداً با احتیاط نوشته شده‌اند.</span>
-          <a href={content.meta.creatorUrl}>طراحی تجربه و روایت: یاس دستان</a>
+          <ExperienceCredit />
         </footer>
       </main>
       <MobilePathSheet
@@ -652,7 +672,7 @@ function CVView({ onReview }) {
             </section>
           </aside>
         </div>
-        <footer className="cv-footer">طراحی تجربه و روایت: <a href={content.meta.creatorUrl}>یاس دستان</a></footer>
+        <ExperienceCredit className="cv-footer" />
       </main>
     </>
   );
@@ -715,37 +735,24 @@ function PuzzleView({ onReview }) {
       <UtilityNav view="puzzle" onReview={onReview} />
       <main id="main-content" className="puzzle-view">
         <section className="puzzle-brief paper-surface">
-          <p className="eyebrow">یک بازی کوتاه از طرف من؛ کاملاً اختیاری</p>
+          <p className="eyebrow">بازی از همین‌جا شروع می‌شود</p>
           <h1>رمز سه‌تاس را پیدا کنید</h1>
-          <p>من یک رمز سه‌عددی ساخته‌ام. هر عدد بین ۱ تا ۶ است، هیچ عددی تکرار نمی‌شود و ترتیب عددها مهم است. شما پنج تلاش دارید.</p>
-          <div className="puzzle-brief__rule">
-            <BookOpen size={24} aria-hidden="true" />
-            <div>
-              <b>چطور بازی کنید؟</b>
-              <ol>
-                <li>با دکمه‌های + و − عدد هر تاس را عوض کنید.</li>
-                <li>وقتی سه عدد متفاوت ساختید، «این ترکیب را امتحان کنید» را بزنید.</li>
-                <li>از دو راهنمایی که می‌گیرید برای حدس بعدی استفاده کنید.</li>
-              </ol>
-            </div>
-          </div>
-          <div className="puzzle-example" aria-label="نمونه‌ی نتیجه‌ی یک تلاش">
-            <b>یک مثال کوتاه</b>
-            <p>اگر رمز پنهان <span dir="ltr">۴ · ۲ · ۶</span> باشد و شما <span dir="ltr">۴ · ۶ · ۱</span> را امتحان کنید:</p>
-            <ul>
-              <li><strong>۱ عدد در جای درست</strong> دارید: ۴ هم در رمز هست و هم درست قرار گرفته.</li>
-              <li><strong>۱ عدد در جای دیگر</strong> دارید: ۶ در رمز هست، اما باید جابه‌جا شود.</li>
-            </ul>
-            <small>راهنما تعداد را می‌گوید، اما نمی‌گوید دقیقاً کدام تاس درست بوده؛ بخش استنتاجی بازی همین‌جاست.</small>
-          </div>
+          <p>من سه تاس با عددهای متفاوت چیده‌ام. ترتیب دقیق آن‌ها را در پنج حدس پیدا کنید.</p>
         </section>
         <section className="code-board" aria-label="بازی قفل سه‌تاس">
+          <div className="code-board__how">
+            <p><b>روش بازی:</b> با + و − عدد هر تاس را عوض کنید. سه عدد باید متفاوت باشند؛ بعد حدستان را ثبت کنید.</p>
+            <div className="feedback-key">
+              <span><b>جای درست</b> یعنی عدد و جای آن هر دو درست‌اند.</span>
+              <span><b>جای دیگر</b> یعنی عدد درست است، اما باید جابه‌جا شود.</span>
+            </div>
+          </div>
           <div className="code-board__tray">
             {guess.map((value, index) => <PuzzleDie key={index} value={value} index={index} onChange={changeDie} disabled={status !== "playing"} />)}
           </div>
           <div className="code-board__actions">
-            <Button icon={Target} onClick={submitGuess} disabled={status !== "playing" || new Set(guess).size !== 3}>این ترکیب را امتحان کنید</Button>
-            <small>{new Set(guess).size !== 3 ? "در رمز عدد تکراری نداریم؛ یکی از تاس‌ها را تغییر دهید." : `${faNumber(5 - attempts.length)} تلاش مانده؛ نتیجه‌ی هر تلاش پایین ثبت می‌شود.`}</small>
+            <Button icon={Target} onClick={submitGuess} disabled={status !== "playing" || new Set(guess).size !== 3}>ثبت این حدس</Button>
+            <small>{new Set(guess).size !== 3 ? "عدد تکراری مجاز نیست؛ یکی از تاس‌ها را عوض کنید." : `${faNumber(5 - attempts.length)} حدس فرصت دارید.`}</small>
           </div>
           <ol className="attempt-log" aria-label="تلاش‌های ثبت‌شده">
             {attempts.length ? attempts.map((attempt, index) => (
@@ -755,9 +762,20 @@ function PuzzleView({ onReview }) {
                 <em>{faNumber(attempt.exact)} عدد در جای درست</em>
                 <em>{faNumber(attempt.misplaced)} عدد در جای دیگر</em>
               </li>
-            )) : <li className="attempt-log__empty">سه عدد متفاوت انتخاب کنید و اولین ترکیب را امتحان کنید. راهنمای همان تلاش اینجا ظاهر می‌شود.</li>}
+            )) : <li className="attempt-log__empty">هنوز حدسی ثبت نشده. نتیجه‌ی اولین حدس همین‌جا می‌آید.</li>}
           </ol>
         </section>
+        <details className="puzzle-help paper-surface">
+          <summary><BookOpen size={22} aria-hidden="true" />یک مثال را ببینید</summary>
+          <div className="puzzle-example" aria-label="نمونه‌ی نتیجه‌ی یک تلاش">
+            <p>اگر پاسخ <span dir="ltr">۴ · ۲ · ۶</span> باشد و شما <span dir="ltr">۴ · ۶ · ۱</span> را حدس بزنید، نتیجه این است:</p>
+            <ul>
+              <li><strong>۱ جای درست:</strong> عدد ۴ هم درست است و هم درست قرار گرفته.</li>
+              <li><strong>۱ جای دیگر:</strong> عدد ۶ در پاسخ هست، اما جای آن اشتباه است.</li>
+            </ul>
+            <small>بازی نمی‌گوید کدام تاس درست بوده؛ باید از نتیجه‌ی چند حدس، ترتیب را پیدا کنید.</small>
+          </div>
+        </details>
         <div className="puzzle-actions">
           <Button kind="quiet" icon={DiceFive} onClick={newRound}>شروع با یک رمز تازه</Button>
           <Button kind="ink" icon={ArrowRight} onClick={() => go("board")}>بازگشت به میز</Button>
@@ -772,6 +790,7 @@ function PuzzleView({ onReview }) {
             </div>
           </section>
         ) : null}
+        <ExperienceCredit className="puzzle-credit" />
       </main>
     </>
   );

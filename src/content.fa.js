@@ -1,6 +1,6 @@
 export const content = {
   meta: {
-    version: "۰.۵",
+    version: "۰.۶",
     title: "امید حیدری — بازی، رفتار، اثر",
     creatorUrl: "https://yashcistudy.github.io/",
     linkedin: "https://www.linkedin.com/in/omid-he",
@@ -18,7 +18,7 @@ export const content = {
     nameEn: "OMID HEIDARI",
     role: "مدیر اجرایی، طراح بازی و گیمیفیکیشن",
     line: "مسائل جدی، با بازی حل می‌شوند.",
-    headline: "افراد، سیستم‌ها و بازی‌ها را کنار هم می‌چینم تا اتفاقی واقعی بیفتد.",
+    headline: "افراد، سیستم‌ها و بازی‌ها را کنار هم می‌چینم",
     intro:
       "بیش از ۲۰ سال است میان فناوری، عملیات، مدیریت و طراحی تجربه حرکت می‌کنم؛ معمولاً کنار یک تیم چندتخصصی و همیشه با یک سؤال ثابت: چه چیزی باید تغییر کند تا افراد بهتر تصمیم بگیرند؟",
     opening:
@@ -173,7 +173,7 @@ export const content = {
   studios: [
     {
       name: "مهرایان",
-      image: "brand-mehrayan.jpg",
+      image: "brand-mehrayan.png",
       kind: "مجموعه",
       url: "https://mehrayan.com",
       role: "در مهرایان، جهت اجرایی پروژه‌ها و شکل‌گیری تیم را رهبری کرده‌ام.",
@@ -190,6 +190,7 @@ export const content = {
       name: "اُستیگان",
       image: "brand-ostigan.png",
       kind: "برند",
+      url: "https://ostigan.com",
       role: "در اُستیگان، ایده و مسیر اجرایی برند را همراه تیم شکل داده‌ام.",
     },
     {
@@ -213,8 +214,9 @@ export const content = {
     { name: "امید حیدری", role: "رهبری طراحی و مسیر محصول" },
     { name: "سعید راوش", role: "طراح بازی" },
     { name: "شقایق عمادی", role: "گرافیست" },
-    { name: "یاس دستان", role: "نویسنده‌ی متن و کتابچه‌ی راهنما در پروژه‌های دارای محتوای نوشتاری" },
-    { name: "مجتبی فرید", role: "تصویربردار و تدوینگر در پروژه‌های دارای ویدئو" },
+    { name: "یاس دستان", role: "کپی رایتر" },
+    { name: "مجتبی فرید", role: "فیلمبردار و تدوینگر" },
+    { name: "ریحانه عبدلی", role: "کارشناس فروش" },
   ],
   method: [
     "گفت‌وگو با مدیران",
